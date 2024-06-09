@@ -1,0 +1,28 @@
+#product img{
+    width: 5rem;
+    height:5rem
+}
+#product{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 40vw;
+}
+#product #about{
+    width: 30vw;
+}
+#product button{
+    border: none;
+    background-color: white;
+}
+#product{
+    font-weight: 700;
+    font-size: 1.2rem;
+    border: 1px solid black;
+    margin: 0.5rem;
+    padding: 0.2rem;
+  }
+  #product #count button{
+    font-size: 1.3rem;
+    color: blue;
+  }
