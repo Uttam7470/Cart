@@ -1,102 +1,117 @@
 import { useEffect, useState } from 'react'
+import Navbar from './Navbar'
+import Productcart from './Productcart'
 import './App.css'
 
-import data from './Data.js'
-import Mobile from './Mobile.jsx'
-
-
-
 function App() {
-  const [product,setProduct] = useState([]);
-  const [total,setTotal] = useState(0);
-  const [cart,setCart] = useState(0);
+  const [products, setProducts] = useState([
+    {
+      "img": "https://www.course-api.com/images/cart/phone-1.png",
+      "title": "Samsung Galaxy S8",
+      "price": 399.99,
+      "quantity": 1
+    },
+    {
+      "img": "https://www.course-api.com/images/cart/phone-2.png",
+      "title": "Google pixel",
+      "price": 499.99,
+      "quantity": 1
+    },
+    {
+      "img": "https://www.course-api.com/images/cart/phone-3.png",
+      "title": "Xiaomi Redmi Note 2",
+      "price": 699.99,
+      "quantity": 1
+    },
+    {
+      "img": "https://www.course-api.com/images/cart/phone-4.png",
+      "title": "Samsung Galaxy S7",
+      "price": 599.99,
+      "quantity": 1
+    },
+  ]);
+
+  const [cartLength, setCartLength] = useState(0);
+
+  console.log(cartLength);
+
+  const [totalprice, setTotalprice] = useState();
+
 
   useEffect(() => {
-  setProduct(data);
-}, []);
-
-useEffect(()=>{
-  let sum = 0;
-  let cart_item = 0;
-    product.forEach((item) => {
-      sum += item.price * item.quantity;
-      cart_item +=item.quantity;
+    let sum = 0;
+    let totalCartLength = 0;
+    products.forEach((item, idx) => {
+      sum += (item.price * item.quantity)
+      totalCartLength += item.quantity;
     });
-    setTotal(Math.round(sum*100)/100);
-    setCart(cart_item);
-     
-},[product])
+    setTotalprice(sum);
+    setCartLength(totalCartLength);
 
+  }, [products])
 
-   function increment(index){
-      let temp =[...product];
-      temp[index].quantity ++;
-      setProduct(temp);
-   }
+  function increaseProduct(index) {
+    let temp = [...products];
+    console.log(temp.length)
+    temp[index].quantity += 1;
+    setProducts(temp);
+  }
 
-   function decrement(index){
-    let temp =[...product];
-    if(temp[index].quantity > 1){
-       temp[index].quantity --;
-       setProduct(temp);
-    }else{
-      remove(index);
+  function decreaseProduct(index) {
+
+    let temp = [...products];
+    if (temp[index].quantity > 1) {
+      temp[index].quantity -= 1;
+      setProducts(temp);
     }
-   }
+    else {
+      removeProduct(index)
+    }
+  }
 
-   function remove(index){
-    let temp = product.filter((item, idx) => {
-      if (idx != index) return item;
-    });
+  function removeProduct(index) {
+    let temp = [...products];
+    temp.splice(index, 1);
 
-    setProduct(temp);
-   }
+    setProducts(temp);
+  }
 
   return (
-    <div id="main">
-      <div id="navbar">
-        <h1>Product Cart</h1>
-        <p><i class="fa-solid fa-cart-plus"></i><span>{cart}</span> </p>
-      </div>
-      {product.length > 0 ? (
-        <div>
+    <>
+    
+      <Navbar cartlength={cartLength} />
+      <h1 id='yourbag'>Your Bag</h1>
+      {
+        products.length > 0 ?
+          <div>
+            {
+              products.map((item, index) => {
+                return <Productcart
+                  key={index}
+                  img={item.img}
+                  title={item.title}
+                  price={item.price}
+                  quantity={item.quantity}
+                  inc={increaseProduct}
+                  dec={decreaseProduct}
+                  index={index}
+                  remove={removeProduct}
+                />
+              })
+            }
+            <hr />
+            <div className='totalprice-div'>
+              <div className='price-div'>
+                <h3>Total Price :</h3>
+                <h2> ${totalprice}</h2>
+              </div>
+              <button onClick={() => setProducts([])}>Clear Cart</button>
+            </div>
 
-      <div id="products">
-        <h2>YOUR BAG</h2>
-     {console.log()}
-        {product.map((ele,index) =>{
-          return <Mobile
-           src={ele.src} 
-           name={ele.name}
-            price={ele.price}
-             quantity={ele.quantity} 
-             increment={()=>{increment(index)}}
-             decrement={()=>{decrement(index)}}
-             remove={()=>{remove(index)
-             }}/>
-        })}
-      </div>
- 
-      <div id="bottom">
-        <div id="hr"></div>
-      <div id="sum">
-        <h3>Total</h3>
-        <h3 id="tot">${total}</h3>
-      </div>
-      <div id="clear">
-        <button onClick={()=>{
-          setProduct([])
-        }}>Clear Cart</button>
-      </div>
-      </div>
-      </div>
-      ):(
-        <div id="error">
-        <p><b>Your Cart is EMPTY!</b></p>
-        </div>
-      )}
+          </div > : <p className='emptyCartPara'></p>
+      }
 
-    </div>
+    </>
   )
 }
 
